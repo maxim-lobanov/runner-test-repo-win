@@ -1,4 +1,4 @@
-name: go
+name: xamarin-android
 on:
   workflow_dispatch:
 jobs:
