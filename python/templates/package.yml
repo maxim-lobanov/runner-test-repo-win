@@ -1,0 +1,12 @@
+steps:
+- task: UsePythonVersion@0
+  displayName: Use Python 3 latest
+  inputs:
+    versionSpec: '3'
+
+- bash: pip install nox
+  displayName: Install dependencies
+
+- bash: |
+  workingDirectory: '$(build.sourcesdirectory)/src/python/umsg/'
+  displayName: Prepare dummy release

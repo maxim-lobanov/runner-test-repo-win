@@ -1,0 +1,23 @@
+steps:
+- task: PowerShell@2
+  displayName: 'Build and execute rust program'
+  inputs:
+    targetType: 'inline'
+    script: |
+      rustc hello.rs
+      ./hello
+    workingDirectory: src/rust/src
+
+- task: PowerShell@2
+  displayName: 'Rustup install'
+  inputs:
+    targetType: 'inline'
+    script: |
+      rustup install nightly | Out-Null
+      rustup show
+
+- task: PowerShell@2
+  displayName: 'Cargo build'
+  inputs:
+    targetType: 'filePath'
+    filePath: src/rust/scripts/cargo.ps1

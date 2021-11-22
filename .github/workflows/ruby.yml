@@ -1,0 +1,22 @@
+name: ruby
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ASrunner
+    steps:
+      - run: git clone https://github.com/bbq-beets/asviridenko-test-repo.git .
+      - run: |
+          echo $AGENT_TOOLSDIRECTORY/Ruby/2.7.4/x64/bin >> $GITHUB_PATH
+      - run: |
+          cd ruby
+          gem install bundler --force
+          bundle install --retry=3 --jobs=4
+          ruby ruby_version.rb
+      - run: |
+          cd ruby/cucumber-hello
+          bundle install
+          bundle exec cucumber
+      - run: |
+          ruby -ropenssl -e "puts 'Ruby SSL OK'"
+          ruby -rreadline -e "puts 'Ruby readline OK'"

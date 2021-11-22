@@ -1,0 +1,19 @@
+steps:
+- task: PowerShell@2
+  displayName: 'Inline script'
+  inputs:
+    targetType: inline
+    script: 'Write-Host hello'
+
+- task: PowerShell@2
+  displayName: 'Script from file'
+  inputs:
+    targetType: filePath
+    filePath: src/powershell/scripts/hello.ps1
+
+- task: PowerShell@2
+  displayName: 'Script from file with args'
+  inputs:
+    targetType: filePath
+    filePath: src/powershell/scripts/args.ps1
+    arguments: hello

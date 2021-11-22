@@ -1,0 +1,12 @@
+name: powershell
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ASrunner
+    steps:
+      - run: git clone https://github.com/bbq-beets/asviridenko-test-repo.git .
+      - run: Write-Host hello
+        shell: pwsh
+      - run: ./powershell/scripts/hello.ps1
+        shell: pwsh

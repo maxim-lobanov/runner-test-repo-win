@@ -1,0 +1,33 @@
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: ${{ parameters.nodeVersion }}
+  displayName: 'Install Node.js'
+
+# using cli
+- script: npm install
+  displayName: 'npm install'
+  workingDirectory: src/node-typescript
+
+- bash: npm test -- --reporter mocha-junit-reporter
+  displayName: 'npm test'
+  workingDirectory: src/node-typescript
+
+- bash: grep -q constructs test-results.xml
+  displayName: 'Validate tests ran'
+  workingDirectory: src/node-typescript
+
+# using tasks which support proxies, auth etc...
+- task: Npm@1
+  displayName: 'npm install'
+  inputs:
+    workingDir: src/node-typescript
+    verbose: false
+
+- task: Npm@1
+  displayName: 'npm test'
+  inputs:
+    command: custom
+    customCommand: 'test'
+    workingDir: src/node-typescript
+    verbose: false

@@ -1,0 +1,63 @@
+steps:
+  - task: PowerShell@2
+    displayName: 'Install Tox'
+    inputs:
+      targetType: inline
+      script: |
+        if (-not $IsWindows) {
+          # Python 3.5 has an issue with Pip 21 https://github.com/pypa/pip/issues/9500
+          $pythonVer = python3 --version
+          if ($pythonVer -match "3.5.*")
+          {
+            pip3 install -U pip==20.3.4
+          }
+          else
+          {
+            pip3 install -U pip
+          }
+          pip3 install tox
+          # Install specific virtualenv 20.4.0 due to possible issues with tox and load package
+          pip3 --version
+          pip3 install --upgrade virtualenv==20.4.0
+        }
+        else {
+          pip install tox
+        }
+      pwsh: true
+
+    # Checkout a certain commit to avoid changes in the Tox tests
+  - bash: |
+      set -e
+      git clone "https://github.com/tox-dev/tox.git" --branch "master"
+      cd tox
+      git checkout "a42ff1169a17c9aadb3eac904fb9b6972a0b7660"
+    displayName: 'Clone Tox repository'
+
+    # After packaging was updated 28th November, It started produce more Warnings and 
+    # tox tests started to fail. Until tests will be fixed, we disable some tests.
+  - task: PowerShell@2
+    displayName: 'Add tests to ignore case'
+    inputs:
+      targetType: inline
+      script: |
+        cd tox
+        $searchPattern = "commands = pytest"
+        # Temporary ignore tests/unit/test_venv.py test case for Windows Server 2022
+        $ignoreCommand = "commands = pytest --ignore=tests/unit/config/test_config.py --ignore=tests/unit/interpreters/test_interpreters.py --ignore=tests/integration/test_parallel_interrupt.py --ignore=tests/unit/package/test_package_parallel.py --ignore=tests/unit/test_venv.py"
+        (Get-Content "./tox.ini") -replace $searchPattern, $ignoreCommand | Set-Content ./tox.ini
+      pwsh: true
+  
+  - task: PowerShell@2
+    displayName: 'Test tox'
+    inputs:
+      targetType: inline
+      script: |
+        cd tox
+        $version = $(python -c "import sys; print('py{0}{1}'.format(sys.version_info.major, sys.version_info.minor))")
+        if (-not $IsWindows) {
+          $version = $(python3 -c "import sys; print('py{0}{1}'.format(sys.version_info.major, sys.version_info.minor))")
+          python3 -m tox -e $version --skip-missing-interpreters false
+        } else {
+          tox -e $version --skip-missing-interpreters false
+        }
+      pwsh: true

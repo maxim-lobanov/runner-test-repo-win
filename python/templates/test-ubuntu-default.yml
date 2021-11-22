@@ -1,0 +1,21 @@
+steps:
+- bash: |
+    pypath=$(which python3 2>&1)
+    echo "Python path is: "$pypath
+    if [[ $pypath  == "/usr/local/bin/python3" ]] || [[ $pypath  == "/usr/bin/python3" ]]
+    then
+        echo "Python path is OK."
+    else
+        echo "Unexpected Python3 path."
+        exit 1
+    fi
+  displayName: Check Python Path
+
+- task: PythonScript@0
+  inputs:
+    scriptSource: inline
+    pythonInterpreter: python3
+    script: |
+      import requests
+      print('hello world')
+  displayName: Run a Python script

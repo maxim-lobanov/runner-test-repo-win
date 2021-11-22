@@ -1,0 +1,16 @@
+# This test is meant to check that C extensions can be built by `python setup.py build_ext`.
+# This test came from a bug report where the psutil package was failing to install
+# because of misconfiguration of the interpreters we build for Ubuntu.
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: $(python.version)
+  displayName: Use Python $(python.version)
+
+- script: |
+    python -m venv /tmp/aml-ve
+    source /tmp/aml-ve/bin/activate
+    easy_install --version
+    pip install psutil --verbose
+  displayName: Install psutil

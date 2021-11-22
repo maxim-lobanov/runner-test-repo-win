@@ -1,0 +1,46 @@
+parameters:
+  projectPath: './src/Java/AndroidEmptySDK28'
+  wrapperScript: './src/Java/AndroidEmptySDK28/gradlew'
+  tasks: 'build'
+
+steps:
+- task: Gradle@2
+  displayName: 'gradlew build'
+  inputs:
+    gradleWrapperFile: ${{ parameters.wrapperScript }}
+    tasks: ${{ parameters.tasks }}
+    workingDirectory: ${{ parameters.projectPath }}
+
+- task: AndroidSigning@3
+  displayName: 'Signing and aligning APK file(s) **/*.apk'
+  inputs:
+    apkFiles: '**/*.apk'
+    apksign: false
+    zipalign: false
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)'
+    Contents: '**/*.apk'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+  enabled: false
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+  enabled: false
+
+- task: AppCenterTest@1
+  displayName: 'Test with Visual Studio App Center'
+  inputs:
+    appFile: '**/*.apk'
+  enabled: false
+
+- task: AppCenterDistribute@1
+  displayName: 'Deploy **/*.apk to Visual Studio App Center'
+  inputs:
+    appFile: '**/*.apk'
+    symbolsIncludeParentDirectory: false
+  enabled: false

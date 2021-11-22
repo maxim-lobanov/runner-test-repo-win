@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:helpers="clr-namespace:AviaExplorer.Helpers"
+             xmlns:models="clr-namespace:AviaExplorer.Models.Avia"
+             xmlns:aviavms="clr-namespace:AviaExplorer.ViewModels.Avia"
+             xmlns:material="clr-namespace:XF.Material.Forms.UI;assembly=XF.Material"
+             Title="{helpers:Translate flightsPageTitle}"
+             BindingContext="{helpers:ViewModelLocator ViewModelType={x:Type aviavms:FlightDetailViewModel}}"
+             x:Class="AviaExplorer.Views.Pages.FlightDetailPage">
+    <ScrollView HorizontalScrollBarVisibility="Never" Orientation="Vertical">
+        <RefreshView IsRefreshing="{Binding FlightsUpdating}" Command="{Binding GetFlightsDataCommand}">
+            <CollectionView ItemsSource="{Binding Flights}" ItemSizingStrategy="MeasureFirstItem">
+                <CollectionView.Header>
+                    <ContentView Padding="10,15">
+                        <material:MaterialCard Padding="10" Elevation="8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="25"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <material:MaterialLabel
+                                    Text="{Binding CurrentDirection.CombinedName, Mode=OneTime}"
+                                    TextColor="Black"/>
+                                <material:MaterialLabel Grid.Row="1"
+                                    Text="{Binding CurrentDirection.CombinedIATA, Mode=OneTime}"
+                                    TextColor="Gray"/>
+                                <material:MaterialLabel Grid.Column="1" HorizontalOptions="End"
+                                    Text="{Binding CurrentDirection.DestinationCountry, Mode=OneTime}"
+                                    TextColor="OrangeRed"/>
+                            </Grid>
+                        </material:MaterialCard>
+                    </ContentView>
+                </CollectionView.Header>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:FlightModel">
+                        <ContentView Padding="10,15">
+                            <Grid ColumnSpacing="0" RowSpacing="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="70"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <material:MaterialLabel FontSize="Caption" LineBreakMode="TailTruncation"
+                                    Text="{Binding DepartureDate, Mode=OneTime}"/>
+                                <material:MaterialLabel FontSize="Caption" Grid.Row="1"
+                                    LineBreakMode="TailTruncation"
+                                    Text="{Binding ReturnDate, Mode=OneTime}"/>
+                                <material:MaterialLabel Grid.Column="1" HorizontalOptions="End"
+                                    Text="{Binding Price, Mode=OneTime}"/>
+                            </Grid>
+                        </ContentView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </ScrollView>
+</ContentPage>

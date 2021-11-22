@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:helpers="clr-namespace:AviaExplorer.Helpers"
+             xmlns:models="clr-namespace:AviaExplorer.Models.Avia"
+             xmlns:aviavms="clr-namespace:AviaExplorer.ViewModels.Avia"
+             xmlns:xe="clr-namespace:XamEffects;assembly=XamEffects"
+             xmlns:material="clr-namespace:XF.Material.Forms.UI;assembly=XF.Material"
+             Title="{helpers:Translate originSelectionPageTitle}"
+             BindingContext="{helpers:ViewModelLocator ViewModelType={x:Type aviavms:OriginSelectionViewModel}}"
+             x:DataType="aviavms:OriginSelectionViewModel"
+             x:Name="originSelection"
+             x:Class="AviaExplorer.Views.Pages.OriginSelectionPage">
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <material:MaterialTextField IsSpellCheckEnabled="False" IsTextAllCaps="True"
+            BackgroundColor="Transparent" InputType="Plain"
+            Placeholder="{helpers:Translate enterIATA}" IsMaxLengthCounterVisible="False"
+            Text="{Binding OriginIATA, Mode=TwoWay}" FloatingPlaceholderEnabled="True"
+            Unfocused="MaterialTextField_Unfocused" MaxLength="32"
+            TextChangeCommand="{Binding FilterOriginCommand, Mode=OneWay}"
+            ReturnType="Search" ReturnCommand="{Binding FindAndNavigateCommand}">
+            <material:MaterialTextField.LeadingIcon>
+                <FontImageSource FontFamily="{DynamicResource SegoeMDL2FontFamily}"
+                    Glyph="&#xe1a3;" Size="64"/>
+            </material:MaterialTextField.LeadingIcon>
+        </material:MaterialTextField>
+        <RefreshView Grid.Row="1" IsRefreshing="{Binding ChoicesUpdating}"
+            Command="{Binding GetChoicesCommand}">
+            <CollectionView ItemsSource="{Binding AvailableChoices}" ItemSizingStrategy="MeasureFirstItem">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:AirportChoice">
+                        <ContentView Padding="10,15" BackgroundColor="WhiteSmoke"
+                            xe:TouchEffect.Color="White"
+                            xe:Commands.Tap="{Binding
+                            Source={x:Reference originSelection},
+                            Path=BindingContext.NavigateToFlightsCommand}"
+                            xe:Commands.TapParameter="{Binding .}">
+                            <material:MaterialLabel Text="{Binding Name, Mode=OneTime}"/>
+                        </ContentView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

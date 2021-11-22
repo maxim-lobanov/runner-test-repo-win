@@ -1,0 +1,33 @@
+steps:
+
+- task: UseRubyVersion@0
+  displayName: 'Do not append PATH'
+  name: 'Test1'
+  inputs:
+    versionSpec: '2.7'
+    addToPath: false
+
+- bash: |
+    if grep -q "Ruby/2.7" <<< "$PATH"; then
+        echo 'A value was added to PATH but should not have to'
+        exit 1
+    else
+        echo 'PATH was not appended. Test passed'
+    fi
+  displayName: 'Check that PATH was not appended'
+
+- task: UseRubyVersion@0
+  displayName: 'Append PATH'
+  name: 'Test2'
+  inputs:
+    versionSpec: '2.7'
+
+- bash: |
+    if ! grep -q "Ruby/2.7" <<< "$PATH";
+    then
+        echo 'PATH has not been appended'
+        exit 1
+    else
+        echo 'PATH has been appended'
+    fi
+  displayName: 'Test appending PATH'

@@ -1,0 +1,48 @@
+parameters:
+- name: skipMSYS2Check
+  type: boolean
+  default: false
+
+steps:
+- task: PowerShell@2
+  inputs:
+    targetType: filePath
+    filePath: src/ruby/validate-version.ps1
+    arguments: '-ExpectedVersion $(ruby.version)'
+    pwsh: true
+  condition: and(succeeded(), ne(variables['ruby.version'], ''))
+  displayName: Validate Toolcache Ruby version
+
+- script: |
+    gem install bundler --force
+    bundle install --retry=3 --jobs=4
+  displayName: 'Bundle install'
+  workingDirectory: src/ruby
+
+- script: ruby ruby_version.rb
+  displayName: 'Run sample'
+  workingDirectory: src/ruby
+
+- script: |
+    bundle install
+    bundle exec cucumber
+  displayName: 'Test we can run cucumber'
+  workingDirectory: src/ruby/cucumber-hello
+
+- powershell: |
+    if ('$(ruby.version)' -eq '2.4') {
+      ruby -ropen-uri -e "eval open('https://git.io/vQhWq').read"
+    } else {
+      ruby -ropen-uri -e "eval URI.open('https://git.io/vQhWq').read"
+    }
+  displayName: 'Run SSL check'
+
+- script: ruby -ropenssl -e "puts 'Ruby SSL OK'"
+  displayName: 'Test openssl support'
+
+- script: ruby -rreadline -e "puts 'Ruby readline OK'"
+  displayName: 'Test readline support'
+
+- script: gem install puma
+  displayName: 'Test gem with C extensions (it requires MSYS2 in Windows)'
+  condition: ${{ not(parameters.skipMSYS2Check) }}

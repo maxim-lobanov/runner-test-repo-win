@@ -1,0 +1,13 @@
+parameters:
+  - name: "runScriptInSeparateScope"
+    type: string
+    default: false
+
+steps:
+- task: PowerShell@2
+  displayName: 'Check accessing variables throught global scope, runScriptInSeparateScope - ${{ parameters.runScriptInSeparateScope }}'
+  inputs:
+    targetType: filePath
+    filePath: src/powershell/scripts/entrypointScript.ps1
+    runScriptInSeparateScope: ${{ parameters.runScriptInSeparateScope }}
+    arguments: -runScriptInSeparateScope ${{ parameters.runScriptInSeparateScope }}

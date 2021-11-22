@@ -1,0 +1,9 @@
+steps:
+- task: UsePythonVersion@0
+  displayName: 'Use Python 3.x'
+
+- script: |
+    pip3 install selenium
+    python python-test.py
+  workingDirectory: src/chrome-driver
+  displayName: 'Run Chrome Driver using Python'

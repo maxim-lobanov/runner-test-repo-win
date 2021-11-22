@@ -1,0 +1,9 @@
+plugins {
+    id 'java'
+}
+
+sourceCompatibility = '1.10'
+targetCompatibility = '1.10'
+
+apply plugin: 'java'
+

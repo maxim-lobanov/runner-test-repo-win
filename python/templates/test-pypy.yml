@@ -1,0 +1,20 @@
+steps:
+  - task: UsePythonVersion@0
+    displayName: Use Python ${{ parameters.pythonVersion }}
+    inputs:
+      versionSpec: ${{ parameters.pythonVersion }}
+
+  - script: python src/python/python-default/simple_app.py
+    displayName: Test PyPy
+
+  - pwsh: |
+      if ("${{ parameters.pythonVersion }}" -eq "pypy3") {
+        $pyVersion = python -c "import sys; print('pypy{0}{1}'.format(sys.version_info.major, sys.version_info.minor))"
+        if ("$pyVersion" -eq "pypy36") {
+          Write-Host 'Pypy3 has been resolved correctly'
+        }
+        else {
+          throw 'Pypy3 has not been resolved correctly'
+        }
+      }
+    displayName: 'Check PyPy3'

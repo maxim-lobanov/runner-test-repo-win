@@ -1,0 +1,15 @@
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: $(python.version)
+  displayName: Use Python $(python.version)
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install wheel
+  workingDirectory: '$(Build.SourcesDirectory)/src/python/c-extension/'
+  displayName: Install dependencies
+
+- script: make
+  workingDirectory: '$(Build.SourcesDirectory)/src/python/c-extension/'
+  displayName: make

@@ -1,0 +1,12 @@
+name: kotlin
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ASrunner
+    steps:
+      - run: git clone https://github.com/bbq-beets/asviridenko-test-repo.git .
+      - run: |
+          cd kotlin/sample
+          kotlinc App.kt -include-runtime -d App.jar
+          java -jar App.jar

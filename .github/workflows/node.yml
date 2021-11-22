@@ -1,0 +1,14 @@
+name: node
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ASrunner
+    steps:
+      - run: git clone https://github.com/bbq-beets/asviridenko-test-repo.git .
+      - run: |
+          cd node/node-typescript
+          npm install 
+      - run: |
+          cd node/node-typescript
+          npm test -- --reporter mocha-junit-reporter

@@ -1,0 +1,18 @@
+parameters:
+  projectPath: './src/Java/KotlinProject'
+  wrapperScript: './src/Java/KotlinProject/gradlew'
+  tasks: 'assemble'
+
+steps:
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '8'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
+
+- task: Gradle@2
+  displayName: 'gradlew assemble'
+  inputs:
+    gradleWrapperFile: ${{ parameters.wrapperScript }}
+    tasks: ${{ parameters.tasks }}
+    workingDirectory: ${{ parameters.projectPath }}

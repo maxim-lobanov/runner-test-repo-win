@@ -1,0 +1,4 @@
+steps:
+- script: mvn install
+  workingDirectory: src/chrome-driver/java
+  displayName: 'Run Chrome Driver using Java'
