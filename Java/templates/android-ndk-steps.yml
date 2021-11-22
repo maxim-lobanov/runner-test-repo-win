@@ -1,0 +1,32 @@
+parameters:
+  projectPath: './src/Java/AndroidNDK18'
+  wrapperScript: './src/Java/AndroidNDK18/gradlew'
+  tasks: 'build'
+
+steps:
+- task: Gradle@2
+  displayName: 'gradlew build'
+  inputs:
+    gradleWrapperFile: ${{ parameters.wrapperScript }}
+    tasks: ${{ parameters.tasks }}
+    workingDirectory: ${{ parameters.projectPath }}
+
+- task: AndroidSigning@3
+  displayName: 'Signing and aligning APK file(s) **/*.apk'
+  inputs:
+    apkFiles: '**/*.apk'
+    apksign: false
+    zipalign: false
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)'
+    Contents: '**/*.apk'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+

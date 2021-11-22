@@ -1,0 +1,54 @@
+steps:
+
+- task: UsePythonVersion@0
+  displayName: 'Do not append PATH'
+  name: 'Test1'
+  inputs:
+    versionSpec: '3.8.x'
+    addToPath: false
+    architecture: 'x64'
+
+- bash: |
+    if grep -q "Python/3.8" <<< "$PATH"; then
+        echo 'A value was added to PATH but should not have to'
+        exit 1
+    else
+        echo 'PATH was not appended. Test passed'
+    fi
+  displayName: 'Check that PATH was not appended'
+
+- pwsh: |
+    if (Test-Path "$(Test1.pythonLocation)") {
+        Write-Host 'Python location has been set'
+    } else {
+      throw 'Python location has not been set'
+    }
+    echo 'pythonLocation=$(Test1.pythonLocation)'
+
+    $pattern = 'Python/3.8'
+    if ($env:OS -like '*Windows*') {
+      $pattern = 'Python\3.8'
+    }
+
+    if ('$(Test1.pythonLocation)' -like "*$pattern*") {
+      Write-Host 'Python location is OK'
+    } else {
+      throw 'Python location is wrong'
+    }
+  displayName: 'Test output variable'
+
+- task: UsePythonVersion@0
+  displayName: 'Append PATH'
+  name: 'Test2'
+  inputs:
+    versionSpec: '3.8.x'
+
+- bash: |
+    if ! grep -q "Python/3.8" <<< "$PATH";
+    then
+        echo 'PATH has not been appended'
+        exit 1
+    else
+        echo 'PATH has been appended'
+    fi
+  displayName: 'Test appending PATH'

@@ -1,0 +1,14 @@
+name: openssl
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ASrunner
+    steps:
+      - run: git clone https://github.com/bbq-beets/asviridenko-test-repo.git .
+      - run: |
+          echo some_value > input.txt
+      - run: |
+          openssl dgst -sha256 -hex input.txt > sha256.txt
+      - run: |
+          cat sha256.txt

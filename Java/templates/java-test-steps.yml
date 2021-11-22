@@ -1,0 +1,7 @@
+parameters:
+  projectPath: './src/Java/J2SE'
+
+steps:
+- bash: bash scripts/build-and-run-test.sh
+  workingDirectory: ${{ parameters.projectPath }}
+  displayName: 'Java test via cli'

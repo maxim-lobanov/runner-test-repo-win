@@ -1,0 +1,21 @@
+steps:
+- task: Go@0
+  displayName: 'go get'
+  inputs:
+    arguments: '-d'
+    workingDirectory: './src/go/go-web-app'
+
+- task: Go@0
+  displayName: 'go build'
+  inputs:
+    command: build
+    workingDirectory: './src/go/go-web-app'
+
+- task: ArchiveFiles@2
+  displayName: 'Archive files'
+  inputs:
+    rootFolderOrFile: '$(Build.Repository.LocalPath)/src/go/go-web-app'
+    includeRootFolder: False
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish artifact'

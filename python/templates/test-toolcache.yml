@@ -1,0 +1,43 @@
+steps:
+  - bash: |
+      if [ -z "${{ parameters.pythonArch }}" ]; then
+        echo '##vso[task.setvariable variable=architecture]x64'
+      else
+        echo '##vso[task.setvariable variable=architecture]${{ parameters.pythonArch }}'
+      fi
+    displayName: Set Python architecture
+
+  - task: UsePythonVersion@0
+    displayName: Use Python ${{ parameters.pythonVersion }}
+    inputs:
+      versionSpec: ${{ parameters.pythonVersion }}
+      architecture: $(architecture)
+
+  - task: PowerShell@2
+    inputs:
+      targetType: filePath
+      filePath: src/python/validate-version.ps1
+      arguments: '-ExpectedVersion ${{ parameters.pythonVersion }}'
+      pwsh: true
+    displayName: Validate Toolcache Python version
+
+  - pwsh: |
+      $pythonVersion = "${{ parameters.pythonVersion }}"
+      if ($pythonVersion -eq "2.7") {
+        Write-Host "$pythonVersion is excluded from tests due to incompatibility with shlex module"
+        exit 0
+      }
+
+      pip install tox
+
+      $pypyVer = $pythonVersion.Replace(".", "")
+      tox -e "py${pypyVer}"
+    workingDirectory: '$(build.sourcesdirectory)/src/python/umsg/'
+    displayName: Tox run unit tests
+
+  - task: PowerShell@2
+    displayName: Test PyInstaller and PyLauncher
+    inputs:
+      TargetType: filePath
+      filePath: '$(build.sourcesdirectory)/src/python/python-default/run_test_script.ps1'
+      arguments: '-Version ${{ parameters.pythonVersion }} -SourcesDirectory $(build.sourcesdirectory) -Arch "$(architecture)"'

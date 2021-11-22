@@ -1,0 +1,8 @@
+steps:
+- bash: 'npm config delete prefix && . ~/.nvm/nvm.sh && nvm use ${{ parameters.nodeVersion }}'
+  displayName: 'Switch to ${{ parameters.nodeVersion }} with NVM'
+  workingDirectory: src/node
+
+- bash: 'npm install && npm start'
+  displayName: 'Run ${{ parameters.nodeVersion }}'
+  workingDirectory: src/node

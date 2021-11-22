@@ -1,0 +1,18 @@
+steps:
+- task: NuGetToolInstaller@1
+  displayName: 'Use NuGet Latest'
+  inputs:
+    versionSpec: '*'
+    checkLatest: true
+    
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(build.sourcesdirectory)/src/xamarin-android/vs2019/**/*.sln'
+
+- task: XamarinAndroid@1
+  inputs:
+    projectFile: '$(build.sourcesdirectory)/src/xamarin-android/vs2019/**/*droid*.csproj'
+    outputDirectory: '$(outputDirectory)'
+    configuration: '$(buildConfiguration)'
+    msbuildArguments: '/p:AndroidNdkDirectory="$(ANDROID_NDK_HOME)"'
+    jdkVersionOption: 1.8

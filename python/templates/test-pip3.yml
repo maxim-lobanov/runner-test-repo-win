@@ -1,0 +1,7 @@
+steps:
+- script: |
+   set -e
+   pip3 install arrow
+   python3 -c "import arrow; a = arrow.get('2013-05-11T21:23:58.970460+07:00'); print(a)"
+   
+  displayName: 'Test pip3'

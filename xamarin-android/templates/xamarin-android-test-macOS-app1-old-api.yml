@@ -1,0 +1,21 @@
+steps:
+
+- task: Bash@3
+  displayName: 'Set Xamarin & Mono'
+  inputs:
+    targetType: filePath
+    filePath: src/xamarin-ios/select-xamarin.sh
+    arguments: ${{ parameters.XAMARIN_SYMLINK }}
+
+- task: CmdLine@2
+  displayName: 'Restore Nuget'
+  inputs:
+    script: nuget restore $(build.sourcesdirectory)/src/xamarin-android/macOS/MyWeatherOldApi.Forms/MyWeather.sln
+
+- task: XamarinAndroid@1
+  displayName: 'Build Xamarin.Android Project MyWeather.Android.csproj'
+  inputs:
+    projectFile: '$(build.sourcesdirectory)/src/xamarin-android/macOS/MyWeatherOldApi.Forms/MyWeather.Droid/MyWeather.Android.csproj'
+    outputDirectory: '$(build.binariesdirectory)/$(BuildConfiguration)'
+    configuration: '$(BuildConfiguration)'
+    msbuildVersionOption: latest

@@ -1,0 +1,26 @@
+steps:
+- powershell: |
+    $version = $(python --version)
+    Write-Host "Python version in PATH: $version"
+    Write-Host "PATH: $env:PATH"
+  displayName: Check Python version
+
+- powershell: |
+    $version = $(pip --version)[0]
+    Write-Host "Pip version in PATH: $version"
+    Write-Host "PATH: $env:PATH"
+  displayName: 'Check pip version'
+
+- powershell: python -m pip install --upgrade pip
+  displayName: Update pip
+
+- powershell: pip install requests
+  displayName: Test pip install
+
+- task: PythonScript@0
+  inputs:
+    scriptSource: inline
+    script: |
+      import requests
+      print('hello world')
+  displayName: Run a Python script

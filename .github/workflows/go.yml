@@ -1,0 +1,16 @@
+name: go
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ASrunner
+    steps:
+      - run: git clone https://github.com/bbq-beets/asviridenko-test-repo.git .
+      - run: |
+          cd go/go-web-app
+          go get -d
+        shell: pwsh
+      - run: |
+          cd go/go-web-app
+          go build
+        shell: pwsh

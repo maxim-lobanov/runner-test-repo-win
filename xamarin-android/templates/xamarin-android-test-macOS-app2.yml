@@ -1,0 +1,25 @@
+steps:
+
+- task: Bash@3
+  displayName: 'Set Xamarin & Mono'
+  inputs:
+    targetType: filePath
+    filePath: src/xamarin-ios/select-xamarin.sh
+    arguments: ${{ parameters.XAMARIN_SYMLINK }}
+
+- task: UseDotNet@2
+  displayName: 'Switch .Net Core version'
+  inputs:
+    version: ${{ parameters.NETCORE_VERSION }}
+
+- task: CmdLine@2
+  displayName: 'Restore Nuget'
+  inputs:
+    script: nuget restore $(build.sourcesdirectory)/src/xamarin-android/macOS/ToDoList.Forms/Todo.sln
+
+- task: XamarinAndroid@1
+  displayName: 'Build Xamarin.Android project'
+  inputs:
+    projectFile: '$(build.sourcesdirectory)/src/xamarin-android/macOS/ToDoList.Forms/Todo.Android/Todo.Android.csproj'
+    configuration: '$(BuildConfiguration)'
+

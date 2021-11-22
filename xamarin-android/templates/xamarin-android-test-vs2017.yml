@@ -1,0 +1,22 @@
+steps:
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreSolution: '$(build.sourcesdirectory)/src/xamarin-android/vs2017/**/*.sln'
+
+- task: XamarinAndroid@1
+  displayName: 'Build Xamarin.Android Project **/*Droid*.csproj'
+  inputs:
+    projectFile: '$(build.sourcesdirectory)/src/xamarin-android/vs2017/**/*Droid*.csproj'
+    outputDirectory: '$(build.binariesdirectory)/$(BuildConfiguration)'
+    configuration: '$(BuildConfiguration)'
+    msbuildVersionOption: latest
+
+- task: AndroidSigning@3
+  displayName: 'Signing and aligning APK file(s) $(build.binariesdirectory)/$(BuildConfiguration)/*.apk'
+  inputs:
+    files: '$(build.binariesdirectory)/$(BuildConfiguration)/*.apk'
+    keystoreFile: '$(KeystoreFileName)'
+    keystorePass: '$(KeystorePassword)'
+    keystoreAlias: App1Keystore
+    keyPass: '$(KeystorePassword)'

@@ -1,0 +1,21 @@
+steps:
+
+- task: Bash@3
+  displayName: 'Set Xamarin & Mono & NDK version'
+  inputs:
+    targetType: filePath
+    filePath: src/xamarin-ios/select-xamarin.sh
+    arguments: ${{ parameters.XAMARIN_SYMLINK }} ${{ parameters.NDK_VERSION }}
+
+- task: CmdLine@2
+  displayName: 'Restore Nuget'
+  inputs:
+    script: nuget restore $(build.sourcesdirectory)/src/xamarin-android/macOS/SanAngeles_NDK/SanAngeles_NDK.sln
+
+- task: XamarinAndroid@1
+  displayName: 'Build Xamarin.Android Project SanAngeles.csproj'
+  inputs:
+    projectFile: '$(build.sourcesdirectory)/src/xamarin-android/macOS/SanAngeles_NDK/SanAngeles.csproj'
+    outputDirectory: '$(build.binariesdirectory)/$(BuildConfiguration)'
+    configuration: '$(BuildConfiguration)'
+    msbuildVersionOption: latest

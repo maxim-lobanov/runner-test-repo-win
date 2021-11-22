@@ -1,0 +1,23 @@
+name: docker
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ASrunner
+    steps:
+      - run: git clone https://github.com/bbq-beets/asviridenko-test-repo.git .
+      - run: |
+          docker pull debian
+          docker run debian
+      - run: |
+          git clone https://github.com/dockersamples/node-bulletin-board
+          cd node-bulletin-board/bulletin-board-app
+          docker build --tag bulletinboard:1.0 .
+          docker run --publish 8000:8080 --detach --name bb bulletinboard:1.0
+          docker rm --force bb
+      - run: |
+          git clone https://github.com/dockersamples/example-voting-app
+          cd example-voting-app
+          docker-compose up --build &
+          sleep 200
+          docker-compose down

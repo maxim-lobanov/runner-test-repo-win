@@ -1,0 +1,25 @@
+name: python
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ASrunner
+    steps:
+      - run: git clone https://github.com/bbq-beets/asviridenko-test-repo.git .
+      - run: |
+          $version = $(python --version)
+          Write-Host "Python version in PATH: $version"
+          Write-Host "PATH: $env:PATH"
+        shell: pwsh
+
+      - run: |
+          $version = $(pip --version)[0]
+          Write-Host "Pip version in PATH: $version"
+          Write-Host "PATH: $env:PATH"
+        shell: pwsh
+
+      - run: python -m pip install --upgrade pip
+        shell: pwsh
+
+      - run: pip install requests
+        shell: pwsh

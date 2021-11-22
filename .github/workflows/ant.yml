@@ -1,0 +1,11 @@
+name: ant
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ASrunner
+    steps:
+      - run: git clone https://github.com/bbq-beets/asviridenko-test-repo.git .
+      - run: |
+          ant -version
+          ant -buildfile ant/build.xml

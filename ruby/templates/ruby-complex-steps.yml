@@ -1,0 +1,40 @@
+#------------------------------------------------------
+# Good test to validate that Ruby works correctly
+# Build and run unit-tests for Calabash run_loop. It is open-source dependency of Xamarin.UITests
+# https://github.com/calabash/run_loop
+#------------------------------------------------------
+
+parameters:
+  repository_url: 'https://github.com/calabash/run_loop.git'
+  commit: '7669820283278dcbbbdf0ded234177c5cf398c14'
+  xcode: ''
+
+steps:
+- script: |
+    git clone "${{ parameters.repository_url }}"
+    cd run_loop
+    git checkout "${{ parameters.commit }}"
+  displayName: 'Download Calabash.Run_loop'
+
+- script: |
+    sudo xcode-select --switch "/Applications/Xcode_${{parameters.xcode}}.app"
+  workingDirectory: 'run_loop'
+  displayName: 'Select Xcode ${{parameters.xcode}}'
+
+- script: |
+    gem install bundler --force
+    bundle install --retry=3 --jobs=4
+  workingDirectory: 'run_loop'
+  displayName: 'Install dependencies'
+
+- pwsh: |
+    # We need to add skip for some files, because they use checks/tests not supported by ruby 3.0
+    (Get-Content Rakefile | ForEach-Object {
+        $_
+        if ($_.Trim() -eq "RSpec::Core::RakeTask.new(:unit) do |task|") {
+            "    task.rspec_opts = '--exclude-pattern `"spec/lib/shell_spec.rb, spec/lib/xcrun_spec.rb, spec/lib/directory_spec.rb`"'"
+        }
+    }) | Set-Content -Path Rakefile
+    bundle exec rake unit
+  workingDirectory: 'run_loop'
+  displayName: 'Run Unit-Tests'

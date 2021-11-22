@@ -1,0 +1,4 @@
+steps:
+- bash: 'npm install && npm start'
+  displayName: 'Test default Node.js'
+  workingDirectory: src/node

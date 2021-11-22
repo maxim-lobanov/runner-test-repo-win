@@ -1,0 +1,18 @@
+name: rust
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ASrunner
+    steps:
+      - run: git clone https://github.com/bbq-beets/asviridenko-test-repo.git .
+      - run: |
+          cd rust/src
+          rustc hello.rs
+          ./hello
+      - run: |
+          rustup install nightly
+          rustup show
+      - run: |
+          rust/scripts/cargo.ps1
+        shell: pwsh

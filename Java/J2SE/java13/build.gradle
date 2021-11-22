@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+sourceCompatibility = '1.13'
+targetCompatibility = '1.13'
+
+apply plugin: 'java'
+
+
+compileJava {
+    options.compilerArgs += ["--enable-preview"]
+}
+
+test {
+    jvmArgs '--enable-preview'
+}

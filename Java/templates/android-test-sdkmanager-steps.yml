@@ -1,0 +1,66 @@
+steps:
+- task: PowerShell@2
+  displayName: 'Set sdkmanager'
+  inputs:
+    targetType: inline
+    script: |
+        if ($IsWindows) {
+          $sdkRoot = Join-Path ${env:ProgramFiles(x86)} "Android/android-sdk"
+          $sdkmanager = Join-Path $sdkRoot "tools/bin/sdkmanager.bat"
+        } else {
+          $sdkmanager = Join-Path $env:ANDROID_HOME "tools/bin/sdkmanager"
+        }
+        Write-Host "##vso[task.setvariable variable=sdkmanager]${sdkmanager}"
+    pwsh: true
+
+- task: PowerShell@2
+  displayName: 'Download tools'
+  inputs:
+    targetType: inline
+    script: |
+        Write-Host "Install tools"
+        & $env:SDKMANAGER 'platform-tools' 'platforms;android-28'
+        & "${env:SDKMANAGER}" 'add-ons;addon-google_apis-google-19'
+        $allPackages = & "${env:SDKMANAGER}" --list
+        $allPackages = $allPackages | Out-String
+        $index = $allPackages.Indexof("Available Packages")
+        $platformsInstalled = $allPackages.substring(0, $index - 1)
+        $googleApis = $platformsInstalled | Select-String "apis-google-19"
+        $androidPlatform = $platformsInstalled | Select-String "platforms;android-28"
+        
+        if (([string]::IsNullOrEmpty($googleApis)) -or ([string]::IsNullOrEmpty($androidPlatform))) {
+          Write-Host "Packages were not installed"
+          exit 1
+        } else {
+          Write-Host "Packages are installed"
+        }
+    pwsh: true
+
+- task: PowerShell@2
+  displayName: 'Remove tools'
+  inputs:
+    targetType: inline
+    script: |
+        Write-Host "Remove tools"
+        & "${env:SDKMANAGER}" --uninstall 'add-ons;addon-google_apis-google-19'
+        $allPackages = & "${env:SDKMANAGER}" --list
+        $allPackages = $allPackages | Out-String
+        $index = $allPackages.Indexof("Available Packages")
+        $platformsInstalled = $allPackages.substring(0, $index - 1)
+        $googleApis = $platformsInstalled | Select-String "apis-google-19"
+
+        if ([string]::IsNullOrEmpty($googleApis)) {
+          Write-Host "Packages were removed"
+        } else {
+          Write-Host "Packages were not removed"
+          exit 1
+        }
+    pwsh: true
+
+- task: PowerShell@2
+  displayName: 'Update tools'
+  inputs:
+    targetType: inline
+    script: |
+      & "${env:SDKMANAGER}" --update
+    pwsh: true
