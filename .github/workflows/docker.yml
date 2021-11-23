@@ -5,7 +5,7 @@ jobs:
   build:
     runs-on: ASrunner
     steps:
-      - run: git clone https://github.com/bbq-beets/asviridenko-test-repo.git .
+      - uses: actions/checkout@v2
       - run: |
           docker pull debian
           docker run debian
