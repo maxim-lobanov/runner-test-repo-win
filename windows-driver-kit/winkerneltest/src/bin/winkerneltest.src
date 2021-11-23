@@ -1,5 +1,0 @@
-NAME winkerneltest.sys
-
-EXPORTS
-    WinKernelTestOpen
-    WinKernelTestClose

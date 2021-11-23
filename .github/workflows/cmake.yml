@@ -12,7 +12,7 @@ jobs:
           cmake --version
       - run: |
           cd cmake/testfiles
-          cmake -DCMAKE_SHELL=false -DTEST_ONE=one -DTEST_TWO=/one/two/three -DTEST_WIN_VARIABLE=test -DTEST_VARIABLE=test
+          cmake -DCMAKE_SHELL=false -DTEST_ONE=one;two -DTEST_TWO=/one/two/three -DTEST_WIN_VARIABLE=test -DTEST_VARIABLE=test
       - run: |
           cd cmake/testfiles
-          cmake -DCMAKE_SHELL=true -DTEST_ONE=one -DTEST_TWO=/one/two/three -DTEST_VARIABLE=$USER -DTEST_WIN_VARIABLE=%OS%
+          cmake -DCMAKE_SHELL=true -DTEST_ONE=one;two -DTEST_TWO=/one/two/three -DTEST_VARIABLE=$USER -DTEST_WIN_VARIABLE=%OS%

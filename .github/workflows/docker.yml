@@ -7,8 +7,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          docker pull debian
-          docker run debian
+          docker pull mcr.microsoft.com/windows/servercore/insider:10.0.20348.1
+          docker run mcr.microsoft.com/windows/servercore/insider:10.0.20348.1
       - run: |
           git clone https://github.com/dockersamples/node-bulletin-board
           cd node-bulletin-board/bulletin-board-app

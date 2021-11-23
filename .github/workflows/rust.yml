@@ -10,9 +10,11 @@ jobs:
           cd rust/src
           rustc hello.rs
           ./hello
+        shell: pwsh
       - run: |
           rustup install nightly
           rustup show
+        shell: pwsh
       - run: |
           rust/scripts/cargo.ps1
         shell: pwsh
