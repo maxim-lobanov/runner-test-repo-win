@@ -7,7 +7,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          cd rust/src
+          $cargoTarget = "$env:USERPROFILE\.cargo"
+          if (-not (Test-Path $cargoTarget))
+          {
+              New-Item -ItemType Junction -Path $cargoTarget -Target "C:\Rust\.cargo"
+          }
+
+          $rustupTarget = "$env:USERPROFILE\.rustup"
+          if (-not (Test-Path $rustupTarget))
+          {
+              New-Item -ItemType Junction -Path $rustupTarget -Target "C:\Rust\.rustup"
+          }
+          
+          cd rust/src # no default chain
           rustc hello.rs
           ./hello
         shell: pwsh
