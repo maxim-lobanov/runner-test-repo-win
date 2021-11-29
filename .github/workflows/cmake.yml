@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: ASrunner
     steps:
-      - uses: actions/checkout@v2
+      - run: git clone https://github.com/maxim-lobanov/runner-test-repo-win.git .
       - run: |
           which cmake
           cmake --version

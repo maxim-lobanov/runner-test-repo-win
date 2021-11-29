@@ -1,0 +1,18 @@
+name: 7zip
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ASrunner
+    steps:
+      - run: |
+          New-Item -Name "test.txt"
+          7z a test.7z test.txt
+          Remove-Item "test.txt"
+          7z e test.7z
+        shell: pwsh
+      - run: |
+          New-Item -Name "test2.txt"
+          zstd --rm test2.txt
+          zstd -d test2.txt.zst
+        shell: pwsh
